@@ -7,9 +7,17 @@ from flask_migrate import Migrate
 from flask_swagger import swagger
 from api.utils import APIException, generate_sitemap
 from api.models import db
+from datetime import timedelta
 from api.routes import api
+# from api.news import api
 from api.admin import setup_admin
 from api.commands import setup_commands
+from flask_jwt_extended import (
+    JWTManager,  
+    create_access_token,
+    jwt_required,
+    get_jwt_identity
+)
 
 # from models import Person
 
@@ -18,6 +26,12 @@ static_file_dir = os.path.join(os.path.dirname(
     os.path.realpath(__file__)), '../public/')
 app = Flask(__name__)
 app.url_map.strict_slashes = False
+
+app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET_KEY")
+app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=1)  # Ahora funcionará
+app.config["JWT_REFRESH_TOKEN_EXPIRES"] = timedelta(days=30) 
+
+jwt = JWTManager(app) # Ejemplo para refresh token
 
 # database condiguration
 db_url = os.getenv("DATABASE_URL")

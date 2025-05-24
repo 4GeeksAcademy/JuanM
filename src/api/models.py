@@ -6,7 +6,7 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(80), unique=False, nullable=False)
-    is_active = db.Column(db.Boolean(), unique=False, nullable=False)
+    is_active = db.Column(db.Boolean(), unique=False, nullable=False, default=True)
 
     def __repr__(self):
         return f'<User {self.email}>'
@@ -16,4 +16,15 @@ class User(db.Model):
             "id": self.id,
             "email": self.email,
             # do not serialize the password, its a security breach
+        }
+class News(db.Model):
+    id=db.Column(db.String(120),primary_key=True, unique=True, nullable=False)
+    title=db.Column(db.String(120), unique=False)
+    urlToImage=db.Column(db.String(120), unique=True)
+
+    def serialize(self):
+        return{
+            "id":self.id,
+            "title":self.title,
+            "urlToImage":self.urlToImage
         }

@@ -1,0 +1,101 @@
+.crypto-footer {
+  background-color: #1a1a2e;
+  color: #ffffff;
+  padding: 1.5rem 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  border-top: 1px solid #2d2d42;
+}
+
+.footer-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.footer-title {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  color: #e94560;
+  font-size: 1.2rem;
+}
+
+.loading, .error {
+  text-align: center;
+  padding: 1rem;
+  font-style: italic;
+}
+
+.error {
+  color: #ff6b6b;
+}
+
+.crypto-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.crypto-item {
+  display: flex;
+  align-items: center;
+  background-color: #16213e;
+  padding: 0.8rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.crypto-icon {
+  width: 24px;
+  height: 24px;
+  margin-right: 10px;
+}
+
+.crypto-name {
+  font-weight: bold;
+  margin-right: 10px;
+  color: #f9f9f9;
+}
+
+.crypto-price {
+  margin-right: 8px;
+  font-weight: 500;
+}
+
+.crypto-change {
+  font-size: 0.85rem;
+}
+
+.positive {
+  color: #4ecca3;
+}
+
+.negative {
+  color: #ff6b6b;
+}
+
+.footer-disclaimer {
+  text-align: center;
+  font-size: 0.8rem;
+  color: #a1a1a1;
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid #2d2d42;
+}
+
+@media (max-width: 768px) {
+  .crypto-grid {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  }
+  
+  .crypto-item {
+    flex-direction: column;
+    text-align: center;
+    padding: 0.8rem 0.5rem;
+  }
+  
+  .crypto-icon {
+    margin-right: 0;
+    margin-bottom: 5px;
+  }
+}
