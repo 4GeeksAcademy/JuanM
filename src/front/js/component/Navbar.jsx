@@ -21,7 +21,7 @@ const Navbar = () => {
       if (storedEmail) {
         setEmail(storedEmail);
         // Actualiza el store si es necesario
-        actions.setEmail(storedEmail);
+        // actions.setEmail(storedEmail);
       }
     }
   }, [store.email]);
@@ -38,24 +38,22 @@ const Navbar = () => {
         {/* Logo y marca */}
         <Link to="/" className="navbar-brand">
           <GiTwoCoins className="logo-icon" />
-          <span className="brand-name">CryptoFinanzas</span>
+          <span className="brand-name">InfoFinanzas</span>
         </Link>
+
 
         {/* Menú principal */}
         <div className="navbar-links">
-          <Link to="/dashboard" className="nav-link">Dashboard</Link>
+          <Link to="/home" className="nav-link">Dashboard</Link>
           <Link to="/mercados" className="nav-link">Mercados</Link>
-          <Link to="/inversiones" className="nav-link">Inversiones</Link>
+          <Link to="/inversiones" className="nav-link">Predicciones</Link>
           <Link to="/historial" className="nav-link">Historial</Link>
+          <Link to="/pago" className="nav-link">Premium</Link>
         </div>
 
         {/* Área de usuario */}
         <div className="user-area">
-          <button className="notification-btn">
-            <FaBell />
-            {notifications > 0 && <span className="notification-badge">{notifications}</span>}
-          </button>
-
+    
           <div className="user-profile" onClick={() => setIsMenuOpen(!isMenuOpen)}>
             <FaUserCircle className="user-avatar" />
             <span className="user-email">{email || 'Cargando...'}</span>

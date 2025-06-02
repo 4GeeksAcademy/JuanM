@@ -1,0 +1,160 @@
+.user-profile-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.profile-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.user-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 20px;
+  border: 3px solid #4CAF50;
+}
+
+.user-info h2 {
+  margin: 0;
+  color: #333;
+}
+
+.user-email {
+  margin: 5px 0 0;
+  color: #666;
+}
+
+.financial-summary {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.summary-card {
+  flex: 1;
+  padding: 20px;
+  border-radius: 10px;
+  background: #f8f9fa;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.summary-card h3 {
+  margin-top: 0;
+  color: #555;
+  font-size: 16px;
+}
+
+.summary-card .amount {
+  font-size: 24px;
+  font-weight: bold;
+  margin: 10px 0 0;
+}
+
+.summary-card.positive {
+  border-left: 4px solid #4CAF50;
+}
+
+.summary-card.negative {
+  border-left: 4px solid #f44336;
+}
+
+.positive {
+  color: #4CAF50;
+}
+
+.negative {
+  color: #f44336;
+}
+
+.time-range-selector {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.time-range-selector button {
+  padding: 8px 16px;
+  border: none;
+  background: #e0e0e0;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.time-range-selector button.active {
+  background: #4CAF50;
+  color: white;
+}
+
+.investments-list {
+  margin-bottom: 30px;
+}
+
+.investment-item {
+  display: flex;
+  align-items: center;
+  padding: 15px;
+  margin-bottom: 10px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.investment-icon {
+  font-size: 24px;
+  margin-right: 15px;
+}
+
+.investment-details {
+  flex: 1;
+}
+
+.investment-details h4 {
+  margin: 0 0 5px;
+}
+
+.investment-date {
+  margin: 0;
+  color: #666;
+  font-size: 14px;
+}
+
+.investment-numbers {
+  text-align: right;
+}
+
+.investment-amount {
+  margin: 0 0 5px;
+  font-weight: bold;
+}
+
+.performance-chart {
+  margin-top: 30px;
+}
+
+.chart-placeholder {
+  height: 300px;
+  background: #f5f5f5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  color: #666;
+}
+
+.loading-spinner {
+  text-align: center;
+  padding: 50px;
+  font-size: 18px;
+}
+
+.no-investments {
+  text-align: center;
+  padding: 20px;
+  color: #666;
+}

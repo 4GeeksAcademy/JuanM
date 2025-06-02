@@ -1,8 +1,13 @@
+import { BsDatabaseAdd } from "react-icons/bs";
+import { MdEmail } from "react-icons/md";
+
 const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
 			token: null,
 			email:null,
+			error: null,
+			message: null
 		},
 		actions: {
 			// Use getActions to call a function within a fuction
@@ -40,7 +45,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			registerUser:async(userData) =>{
 				try {
 					const response = await fetch(
-						process.env.BACKEND_URL + "api/register",
+						process.env.BACKEND_URL + "/api/register",
 						{
 							method: "POST",
 							headers:{
@@ -54,22 +59,30 @@ const getState = ({ getStore, getActions, setStore }) => {
 					)
 
 					const data = await response.json();
-					if(response.ok) {
-						return {
-							success:true,
-							message:"Usuario Registrado"
-						}
-					}else{
+
+					console.log("mensaje data", data)
+
+					if(!response.ok) {
 						return {
 							success:false,
-							message: data.msg || "Error en el registro",
+							message:data.msg || "Error en el registro",
 						}
 					}
-				}catch(error){
-					console.error("Error", error)
-					return{success: false, message: "Error de conexión"}
+
+					return {
+						success: true,
+						message: data.msg || "Usuario registrado exitosamente",
+						token: data.token, 
+						email: data.email 
+						};
+				}catch(error) {
+					console.error("Error", error);
+					return {
+					success: false, 
+					message: "Error de conexión: " + error.message
+					};
 				}
-			},
+				},
 
 loginUser: async (email, password) => {
   try {
@@ -132,6 +145,18 @@ loginUser: async (email, password) => {
     };
   }
 },
+
+
+logoutUser: () => {
+        localStorage.removeItem("token");
+        localStorage.removeItem("email");
+        setStore({
+          ...getStore(),
+          token: null,
+          email: null
+        
+        });
+      },
       
 		}
 	};

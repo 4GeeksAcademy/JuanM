@@ -39,9 +39,9 @@
 .crypto-item {
   display: flex;
   align-items: center;
-  background-color: #16213e;
+  /* background-color: #16213e; */
   padding: 0.8rem;
-  border-radius: 8px;
+  border-radius: 1px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
@@ -53,7 +53,7 @@
 
 .crypto-name {
   font-weight: bold;
-  margin-right: 10px;
+  margin-right: 5px;
   color: #f9f9f9;
 }
 
@@ -83,7 +83,7 @@
   border-top: 1px solid #2d2d42;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 800px) {
   .crypto-grid {
     grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   }

@@ -3,8 +3,6 @@ import '../../styles/pagestar.css'
 import NewsTicker from './NewsTicker.jsx';
 
 
-
-
 const PageStar = () => {
   const [cryptos, setCryptos] = useState([]);
   const [loading, setLoading] = useState(true);

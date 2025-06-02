@@ -1,18 +1,31 @@
 from flask import Flask, request, jsonify, url_for, Blueprint
-from api.models import db, User, News
-from datetime import timedelta
+from api.models import db, User, News,  CryptoPrice
+from datetime import timedelta, datetime
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
 import re 
 import requests
+import datetime
+import pandas as pd
+from flask import Flask, request, jsonify
+import pandas as pd
+import numpy as np
+import joblib
+from datetime import datetime, timedelta
 
 
 
 api = Blueprint('api', __name__)
 
+
+
+
 # Allow CORS requests to this API
 CORS(api)
+
+# model = MLModel()
+API_URL = "https://miniature-xylophone-56p4j4jj4p7h74pj-3001.app.github.dev/api/history"
 
 # 1.- Prueba
 @api.route('/hello', methods=['POST', 'GET'])
@@ -109,13 +122,13 @@ def login_user():
 @api.route('/news', methods=['GET'])
 def list_news():
     try:
-        # Configuración de la API externa (ejemplo con NewsAPI)
-        api_key = '7b9f682164a2430a90dd666dfe5b6a8a'  # Reemplaza con tu API key real
+        # Configuración de la API externa 
+        api_key = '7b9f682164a2430a90dd666dfe5b6a8a'  
         url = f'https://newsapi.org/v2/top-headlines?country=us&apiKey={api_key}'
         
         # Hacer la solicitud a la API externa
         response = requests.get(url)
-        response.raise_for_status()  # Lanza excepción para errores HTTP
+        response.raise_for_status()  
         
         # Procesar la respuesta
         data = response.json()
@@ -129,6 +142,9 @@ def list_news():
             'publishedAt': article['publishedAt'],
             'source': article['source']['name']
         } for article in articles]
+
+        # formatted_news = News.query.all()
+        # return jsonify([formatted_news.serialize() for user in formatted_news]), 200
         
         return jsonify(formatted_news), 200
     
@@ -136,6 +152,72 @@ def list_news():
         return jsonify({'error': str(e)}), 500
     except Exception as e:
         return jsonify({'error': 'Error al procesar las noticias'}), 500
+    
+
+@api.route('/history', methods=['GET'])
+def get_crypto_history():
+    try:
+        # Parámetros de la solicitud
+        crypto_id = request.args.get('id', 'bitcoin')  
+        days = request.args.get('days', '30')          
+        currency = request.args.get('currency', 'usd') 
+
+        # Configuración de la API de CoinGecko
+        url = f'https://api.coingecko.com/api/v3/coins/{crypto_id}/market_chart'
+        params = {
+            'vs_currency': currency,
+            'days': days
+        }
+    
+        # Hacer la solicitud a la API
+        response = requests.get(url, params=params)
+        response.raise_for_status()  # Lanza excepción para errores HTTP
+        
+        # Procesar la respuesta
+        data = response.json()
+        
+        # Formatear los datos para respuesta
+        price_history = [{
+            'timestamp': point[0],
+            'price': point[1]
+        } for point in data['prices']]
+
+        return jsonify({
+            'crypto_id': crypto_id,
+            'price': currency,
+            'timeframe_days': days,
+            'history': price_history
+        }), 200
+
+    except requests.exceptions.RequestException as e:
+        return jsonify({'error': str(e)}), 500
+    except Exception as e:
+        return jsonify({'error': 'Internal server error'}), 500
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
 
 
 

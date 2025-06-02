@@ -1,62 +1,93 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../../styles/historial.css';
 
 const Historial = () => {
-  // Datos hardcodeados para diferentes criptomonedas
-  const cryptoData = {
-    bitcoin: {
-      name: 'Bitcoin (BTC)',
-      prices: [42000, 43500, 42800, 44000, 45500, 44200, 44800, 46000, 45800, 47000],
-      color: '#f7931a'
-    },
-    ethereum: {
-      name: 'Ethereum (ETH)',
-      prices: [2200, 2400, 2350, 2500, 2450, 2600, 2550, 2700, 2650, 2800],
-      color: '#627eea'
-    },
-    cardano: {
-      name: 'Cardano (ADA)',
-      prices: [1.2, 1.3, 1.25, 1.35, 1.4, 1.38, 1.45, 1.5, 1.48, 1.55],
-      color: '#0033ad'
-    },
-    solana: {
-      name: 'Solana (SOL)',
-      prices: [90, 95, 92, 100, 105, 102, 110, 115, 112, 120],
-      color: '#00ffbd'
-    }
-  };
-
-  const timeLabels = ['1d', '2d', '3d', '4d', '5d', '6d', '7d', '8d', '9d', '10d'];
-
+  const [cryptoData, setCryptoData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  
   const [selectedCrypto, setSelectedCrypto] = useState('bitcoin');
   const [chartType, setChartType] = useState('line');
+  const [timeRange, setTimeRange] = useState('10');
 
-  const currentData = cryptoData[selectedCrypto];
+  // Available cryptocurrencies with their CoinGecko IDs
+  const availableCryptos = {
+    bitcoin: { id: 'bitcoin', name: 'Bitcoin (BTC)', color: '#f7931a' },
+    ethereum: { id: 'ethereum', name: 'Ethereum (ETH)', color: '#627eea' },
+    cardano: { id: 'cardano', name: 'Cardano (ADA)', color: '#0033ad' },
+    solana: { id: 'solana', name: 'Solana (SOL)', color: '#00ffbd' }
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const cryptoId = availableCryptos[selectedCrypto].id;
+        
+        // Fetch historical data from CoinGecko API
+        const response = await fetch(
+          `https://api.coingecko.com/api/v3/coins/${cryptoId}/market_chart?vs_currency=usd&days=${timeRange}`
+        );
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch data');
+        }
+        
+        const data = await response.json();
+
+        console.log( "esta es la data de historial que viene de la API", data)
+        
+        // Process the data to get prices for the last X days
+        const prices = data.prices.map(entry => entry[1]);
+        
+        setCryptoData({
+          ...availableCryptos[selectedCrypto],
+          prices: prices
+        });
+        
+        setLoading(false);
+      } catch (err) {
+        setError(err.message);
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [selectedCrypto, timeRange]);
+
+  if (loading) return <div className="crypto-chart-container">Loading...</div>;
+  if (error) return <div className="crypto-chart-container">Error: {error}</div>;
+  if (!cryptoData) return <div className="crypto-chart-container">No data available</div>;
+
+  const currentData = cryptoData;
   const minPrice = Math.min(...currentData.prices);
   const maxPrice = Math.max(...currentData.prices);
   const priceRange = maxPrice - minPrice;
 
-  // Calcular coordenadas para el gráfico SVG
+  // Calculate coordinates for SVG chart (price higher at top)
   const getSvgY = (price) => {
-    const chartHeight = 200;
-    return chartHeight - ((price - minPrice) / priceRange) * chartHeight;
+    const chartHeight = 100; // Using 100% of SVG height
+    return 100 - ((price - minPrice) / priceRange) * chartHeight;
   };
 
-  // Generar datos para el gráfico de líneas
+  // Generate data for line chart
   const linePathData = currentData.prices.map((price, index) => {
     const x = (index / (currentData.prices.length - 1)) * 100;
     const y = getSvgY(price);
     return `${index === 0 ? 'M' : 'L'}${x} ${y}`;
   }).join(' ');
 
-  // Generar datos para el gráfico de barras
+  // Generate data for bar chart
   const barWidth = 80 / currentData.prices.length;
 
-  // Calcular el cambio porcentual
+  // Calculate percentage change
   const priceChange = (
     ((currentData.prices[currentData.prices.length - 1] - currentData.prices[0]) / 
-    currentData.prices[0] * 100
-  ).toFixed(2));
+    currentData.prices[0]) * 100
+  ).toFixed(2);
+
+  // Generate time labels based on selected time range
+  const timeLabels = Array.from({ length: currentData.prices.length }, (_, i) => `${i + 1}d`);
 
   return (
     <div className="crypto-chart-container">
@@ -65,9 +96,19 @@ const Historial = () => {
           value={selectedCrypto} 
           onChange={(e) => setSelectedCrypto(e.target.value)}
         >
-          {Object.keys(cryptoData).map(key => (
-            <option key={key} value={key}>{cryptoData[key].name}</option>
+          {Object.keys(availableCryptos).map(key => (
+            <option key={key} value={key}>{availableCryptos[key].name}</option>
           ))}
+        </select>
+
+        <select
+          value={timeRange}
+          onChange={(e) => setTimeRange(e.target.value)}
+        >
+          <option value="7">7 días</option>
+          <option value="10">10 días</option>
+          <option value="14">14 días</option>
+          <option value="30">30 días</option>
         </select>
 
         <div className="chart-type-selector">
@@ -86,11 +127,11 @@ const Historial = () => {
         </div>
       </div>
 
-      <div className="chart-title">{currentData.name} - Últimos 10 días</div>
+      <div className="chart-title">{currentData.name} - Últimos {timeRange} días</div>
 
       <div className="chart-wrapper">
         <svg viewBox="0 0 100 100" className="chart-grid">
-          {/* Líneas de la cuadrícula */}
+          {/* Grid lines */}
           {[0, 25, 50, 75, 100].map((y) => (
             <line 
               key={`grid-y-${y}`}
@@ -101,7 +142,7 @@ const Historial = () => {
             />
           ))}
 
-          {/* Gráfico seleccionado */}
+          {/* Selected chart */}
           {chartType === 'line' ? (
             <path 
               d={linePathData} 
@@ -117,7 +158,7 @@ const Historial = () => {
                 <rect
                   key={`bar-${index}`}
                   x={x}
-                  y={100 - height}
+                  y={100 - height}  // Adjusted to grow from bottom
                   width={barWidth}
                   height={height}
                   fill={currentData.color}
@@ -126,7 +167,7 @@ const Historial = () => {
             })
           )}
 
-          {/* Puntos en el gráfico de líneas */}
+          {/* Points on line chart */}
           {chartType === 'line' && currentData.prices.map((price, index) => {
             const x = (index / (currentData.prices.length - 1)) * 100;
             const y = getSvgY(price);
@@ -153,9 +194,9 @@ const Historial = () => {
         </div>
 
         <div className="chart-labels-y">
-          <span style={{ bottom: '0%' }}>${minPrice.toLocaleString()}</span>
-          <span style={{ bottom: '50%' }}>${((maxPrice + minPrice) / 2).toLocaleString()}</span>
           <span style={{ bottom: '100%' }}>${maxPrice.toLocaleString()}</span>
+          <span style={{ bottom: '50%' }}>${((maxPrice + minPrice) / 2).toLocaleString()}</span>
+          <span style={{ bottom: '0%' }}>${minPrice.toLocaleString()}</span>
         </div>
       </div>
 
