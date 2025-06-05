@@ -21,6 +21,7 @@ import Main from "./component/Main.jsx";
 import StockMarkets from "./component/StockMarkets.jsx";
 import Paypal from "./component/Paypal.jsx";
 import AdModal from "./component/AdModal.jsx";
+import ChangePassword from "./component/ChangePassword.jsx";
 
 
 
@@ -28,7 +29,7 @@ import AdModal from "./component/AdModal.jsx";
 // Componente que contiene la lógica de renderizado condicional
 const AppContent = () => {
   const location = useLocation();
-  const hideLayout = location.pathname === "/" || location.pathname === "/login" || location.pathname === "/pago";
+  const hideLayout = location.pathname === "/" || location.pathname === "/login" || location.pathname === "/pago" || location.pathname === "/password";;
 
   return (
     <>
@@ -39,6 +40,7 @@ const AppContent = () => {
         <Route element={<Register />} path="/" />
         <Route element={<Login />} path="/login" />
         <Route element={<Main />} path="/inversiones" />
+        <Route element={<ChangePassword />} path="/password" />
         <Route element={< StockMarkets />} path="/mercados" />
         <Route element={<Historial />} path="/historial" />
         <Route element={<PageStar />} path="/home" />

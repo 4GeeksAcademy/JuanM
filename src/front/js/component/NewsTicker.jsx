@@ -10,7 +10,7 @@ const NewsTicker = () => {
   useEffect(() => {
     const fetchNews = async () => {
       try {
-        const response = await fetch('https://miniature-xylophone-56p4j4jj4p7h74pj-3001.app.github.dev/api/news', {
+        const response = await fetch('https://improved-dollop-j6w4v4vvqvr2xrr-3001.app.github.dev/api/news', {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',

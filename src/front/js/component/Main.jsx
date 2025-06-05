@@ -34,7 +34,7 @@ const Main = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch('https://miniature-xylophone-56p4j4jj4p7h74pj-3001.app.github.dev/api/history');
+        const response = await fetch('https://improved-dollop-j6w4v4vvqvr2xrr-3001.app.github.dev/api/history');
         const data = await response.json();
         setHistoryData(data.history || []);
       } catch (error) {
@@ -220,28 +220,6 @@ const Main = () => {
   }
 };
   
-  // Datos para el gráfico
-  // const chartData = {
-  //   labels: [
-  //     ...historyData.map(item => item.date),
-  //     ...Array.from({ length: futureDays }, (_, i) => `Día futuro ${i + 1}`)
-  //   ],
-  //   datasets: [
-  //     {
-  //       label: 'Precio histórico de Bitcoin',
-  //       data: [...historyData.map(item => parseFloat(item.price)), ...Array(futureDays).fill(null)],
-  //       borderColor: 'rgb(75, 192, 192)',
-  //       tension: 0.1
-  //     },
-  //     {
-  //       label: 'Predicciones',
-  //       data: [...Array(historyData.length).fill(null), ...predictions],
-  //       borderColor: 'rgb(255, 99, 132)',
-  //       tension: 0.1,
-  //       borderDash: [5, 5]
-  //     }
-  //   ]
-  // };
 
   const chartData = {
   labels: [

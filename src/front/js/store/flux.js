@@ -7,7 +7,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 			token: null,
 			email:null,
 			error: null,
-			message: null
+			message: null,
+			id:null
 		},
 		actions: {
 			// Use getActions to call a function within a fuction
@@ -84,9 +85,9 @@ const getState = ({ getStore, getActions, setStore }) => {
 				}
 				},
 
-loginUser: async (email, password) => {
+loginUser: async (email, password,id) => {
   try {
-	console.log("Enviando:", { email, password }); 
+	console.log("Enviando:", { email, password, id }); 
     let response = await fetch(process.env.BACKEND_URL + "api/login", {
       method: "POST",
       headers: {
@@ -112,6 +113,7 @@ loginUser: async (email, password) => {
       // Guardamos el token y la información del usuario
       localStorage.setItem("token", data.token);
       localStorage.setItem("email", data.email); 
+      localStorage.setItem("id", data.id); 
       
     //   // Si el backend devuelve más información del usuario, la podemos guardar
     //   if (data.user) {
@@ -146,6 +148,88 @@ loginUser: async (email, password) => {
   }
 },
 
+
+// changePassword: async (currentPassword, newPassword) => {
+//   try {
+//     const response = await fetch('/api/password', {
+//       method: 'POST',
+//       headers: {
+//         'Content-Type': 'application/json',
+//         'Authorization': `Bearer ${localStorage.getItem('token')}` // o tu método de autenticación
+//       },
+//       body: JSON.stringify({
+//         currentPassword,
+//         newPassword
+//       })
+//     });
+
+//     if (!response.ok) {
+//       const errorData = await response.json();
+//       return { success: false, message: errorData.message };
+//     }
+
+//     return await response.json();
+//   } catch (error) {
+//     return { success: false, message: error.message };
+//   }
+// },
+
+
+changePassword: async (currentPassword, newPassword) => {
+  try {
+    const response = await fetch('/api/password', {
+      method: 'PUT', // Cambiado de POST a PUT
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      },
+      body: JSON.stringify({
+        current_password: currentPassword, // Cambiado a snake_case
+        new_password: newPassword         // Cambiado a snake_case
+      })
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      return { success: false, message: errorData.error || errorData.message };
+    }
+
+    return { success: true, ...await response.json() };
+  } catch (error) {
+    console.error('Error en changePassword:', error);
+    return { 
+      success: false, 
+      message: error.message || 'Error de conexión con el servidor'
+    };
+  }
+},
+
+
+deleteUser: async (id) => {
+    try {
+        const token = localStorage.getItem("token");
+        if (!token) throw new Error("No authentication token found");
+        
+        const url = `${process.env.BACKEND_URL}/api/${id}`; // Asegúrate que la ruta es correcta
+        const response = await fetch(url, {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            }
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.msg || "Failed to delete user");
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error("Delete user error:", error);
+        throw error;
+    }
+},
 
 logoutUser: () => {
         localStorage.removeItem("token");

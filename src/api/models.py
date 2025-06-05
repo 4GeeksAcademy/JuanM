@@ -1,4 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
+from werkzeug.security import generate_password_hash, check_password_hash
 
 db = SQLAlchemy()
 
@@ -11,6 +12,12 @@ class User(db.Model):
 
     def __repr__(self):
         return f'<User {self.email}>'
+    
+    def set_password(self, password):
+        self.clave = generate_password_hash(password)
+        
+    def check_password(self, password):
+        return check_password_hash(self.clave, password)
 
     def serialize(self):
         return {
