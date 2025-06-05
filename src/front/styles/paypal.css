@@ -1,0 +1,14 @@
+.payment-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Esto ocupará toda la altura de la pantalla */
+    width: 100%;   /* Esto ocupará todo el ancho disponible */
+    background-color: black;
+}
+
+/* Opcional: puedes ajustar el ancho del contenedor de los botones */
+.payment-container > div {
+    width: 100%;
+    max-width: 400px; /* O el ancho que prefieras */
+}
