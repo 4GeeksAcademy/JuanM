@@ -7,18 +7,12 @@ from flask_jwt_extended import JWTManager, create_access_token, jwt_required, ge
 import re 
 import requests
 import datetime
-import pandas as pd
 from flask import Flask, request, jsonify
-import pandas as pd
-import numpy as np
-import joblib
 from datetime import datetime, timedelta
-
+from flask_cors import cross_origin
 
 
 api = Blueprint('api', __name__)
-
-
 
 
 # Allow CORS requests to this API
@@ -44,6 +38,15 @@ def list_users():
 def is_valid_email(email):
     regex = r'^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'
     return re.match(regex, email)
+
+
+# GET: /users/<int:idUsuario>
+@api.route('/<int:id>', methods=['GET'])
+def get_user(id):
+    user = User.query.filter_by(id=id).first()
+    if not user:
+        return jsonify({'msg': 'Usuario no encontrado'}), 404	
+    return jsonify(user.serialize())
 
 # 3) Ruta para crear un nuevo usuario
 @api.route('/register', methods=['POST'])
@@ -115,8 +118,26 @@ def login_user():
     ) 
     return jsonify({ "msg" : "Acceso otorgado al usuario: " +  user.email ,
                     "token": access_token,
+                    "id":user.id,
                     "email":user.email
                       }), 200
+
+
+# DELETE: /users/<int:id>
+@api.route('/<int:id>', methods=['DELETE'])
+def delete_user(id):
+    user = User.query.get(id)
+    if not user:
+        return jsonify({'msg': 'Usuario no encontrado'}), 404
+    
+    # Verificar si tiene reservas
+    
+    # Eliminar el usuario y sus relaciones
+    db.session.delete(user)
+    db.session.commit()
+    
+    return jsonify({'msg': 'Usuario eliminado exitosamente'}), 200
+
 
 
 @api.route('/news', methods=['GET'])
@@ -195,11 +216,49 @@ def get_crypto_history():
         return jsonify({'error': 'Internal server error'}), 500
     
 
+@api.route('/password', methods=['PUT'])
+@jwt_required()
+def change_password():
+    try:
+        data = request.get_json()
+        
+        # Debug: Imprime los datos recibidos
+        print("Datos recibidos:", data)
+        
+        if not data or 'current_password' not in data or 'new_password' not in data:
+            return jsonify({"error": "Se requieren current_password y new_password"}), 400
 
+        email = get_jwt_identity()
+        user = User.query.filter_by(email=email).first()
+        
+        if not user:
+            return jsonify({"error": "Usuario no encontrado"}), 404
 
+        # Debug: Verifica valores antes de comparar
+        print(f"Comparando contraseña para usuario: {email}")
+        print(f"Hash almacenado: {user.password}")
+        print(f"Contraseña recibida: {data['current_password']}")
 
+        # Verificación mejorada
+        if not user.check_password(data['current_password']):
+            print("¡La contraseña NO coincide!")
+            return jsonify({"error": "Contraseña actual incorrecta"}), 401
+        else:
+            print("Contraseña verificada correctamente")
 
+        # Validar la nueva contraseña
+        if len(data['new_password']) < 8:
+            return jsonify({"error": "La nueva contraseña debe tener al menos 8 caracteres"}), 400
 
+        # Actualizar la contraseña
+        user.set_password(data['new_password'])
+        db.session.commit()
+
+        return jsonify({"message": "Contraseña actualizada exitosamente"}), 200
+
+    except Exception as e:
+        print("Error completo:", str(e))
+        return jsonify({"error": str(e)}), 500
 
 
 

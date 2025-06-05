@@ -4,6 +4,7 @@ import { FaUserCircle, FaBell, FaCog, FaSignOutAlt } from 'react-icons/fa';
 import { GiTwoCoins } from 'react-icons/gi';
 import '../../styles/navbarfinanzas.css';
 import { Context } from '../store/appContext';
+import { FaTrashAlt } from 'react-icons/fa';
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -26,11 +27,39 @@ const Navbar = () => {
     }
   }, [store.email]);
 
+
+
   const handleLogout = () => {
     actions.logoutUser();
     // Redirige al login después de cerrar sesión
     window.location.href = '/login';
   };
+  // const handleDelete = () => {
+  //   actions.deleteUser();
+  //   // Redirige al login después de eliminar
+  //   window.location.href = '/login';
+  // };
+
+const handleDelete = async () => {
+  if (window.confirm("¿Estás seguro de eliminar tu cuenta?")) {
+    try {
+      // Opción 1: Obtener el ID del localStorage (si lo guardaste al login)
+      const userId = localStorage.getItem("id");
+
+      // Opción 2: Obtener el ID del store (si existe)
+      // const userId = store.user?.id;
+
+      if (!userId) throw new Error("No se pudo obtener el ID del usuario");
+
+      await actions.deleteUser(userId);
+      actions.logoutUser();
+      window.location.href = '/login';
+    } catch (error) {
+      console.error("Error al eliminar la cuenta:", error);
+      alert("Error al eliminar la cuenta: " + error.message);
+    }
+  }
+};
 
   return (
     <nav className="navbar-finanzas">
@@ -60,16 +89,17 @@ const Navbar = () => {
             
             {isMenuOpen && (
               <div className="user-dropdown">
-                <Link to="/perfil" className="dropdown-item">
-                  <FaUserCircle /> Mi Perfil
-                </Link>
-                <Link to="/configuracion" className="dropdown-item">
-                  <FaCog /> Configuración
-                </Link>
-                <div className="dropdown-divider"></div>
+                 <Link to="/password" className="dropdown-item">
+                  <FaCog /> Cambiar Contraseña
+                </Link> 
+                <button onClick={handleDelete} className="dropdown-item">
+                  <FaCog /> Eliminar Cuenta
+                </button>
+                <div className="dropdown-divider"></div> 
                 <button onClick={handleLogout} className="dropdown-item">
                   <FaSignOutAlt /> Cerrar Sesión
                 </button>
+
               </div>
             )}
           </div>
@@ -80,5 +110,7 @@ const Navbar = () => {
 };
 
 export default Navbar;
+
+
 
 
