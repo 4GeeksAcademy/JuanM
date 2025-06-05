@@ -77,7 +77,7 @@ const handleDelete = async () => {
           <Link to="/mercados" className="nav-link">Mercados</Link>
           <Link to="/inversiones" className="nav-link">Predicciones</Link>
           <Link to="/historial" className="nav-link">Historial</Link>
-          <Link to="/pago" className="nav-link">Premium</Link>
+         
         </div>
 
         {/* Área de usuario */}
@@ -89,9 +89,9 @@ const handleDelete = async () => {
             
             {isMenuOpen && (
               <div className="user-dropdown">
-                 <Link to="/password" className="dropdown-item">
+                 {/* <Link to="/password" className="dropdown-item">
                   <FaCog /> Cambiar Contraseña
-                </Link> 
+                </Link>  */}
                 <button onClick={handleDelete} className="dropdown-item">
                   <FaCog /> Eliminar Cuenta
                 </button>

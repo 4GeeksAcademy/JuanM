@@ -44,7 +44,7 @@ const AppContent = () => {
         <Route element={< StockMarkets />} path="/mercados" />
         <Route element={<Historial />} path="/historial" />
         <Route element={<PageStar />} path="/home" />
-        <Route element={<Paypal />} path="/pago" />
+        {/* <Route element={<Paypal />} path="/pago" /> */}
         <Route element={<Demo />} path="/demo" />
         <Route element={<Single />} path="/single/:theid" />
         <Route element={<h1>Not found!</h1>} path="*" />
